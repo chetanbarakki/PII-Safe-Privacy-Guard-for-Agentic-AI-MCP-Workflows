@@ -1,0 +1,25 @@
+[project]
+name = "modelcontextproj"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "download",
+    "en-core-web-sm",
+    "fastapi>=0.135.1",
+    "fastmcp>=3.1.0",
+    "spacy>=3.8.11",
+    "uvicorn>=0.30.0",
+]
+
+[project.scripts]
+pii-safe-mcp = "mcp_server.server:run_mcp_server"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
+
+[tool.uv.sources]
+en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }

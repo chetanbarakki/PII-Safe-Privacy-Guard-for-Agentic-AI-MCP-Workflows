@@ -1,0 +1,41 @@
+{
+  "incident_id": "INC-2024-0301",
+  "severity": "HIGH",
+  "events": [
+    {
+      "timestamp": "2024-03-01T14:22:01Z",
+      "event_type": "failed_login",
+      "user_email": "john.smith@acmecorp.com",
+      "source_ip": "192.168.1.105",
+      "user_agent": "Mozilla/5.0",
+      "details": "Failed login attempt for john.smith@acmecorp.com from 192.168.1.105"
+    },
+    {
+      "timestamp": "2024-03-01T14:22:45Z",
+      "event_type": "failed_login",
+      "user_email": "john.smith@acmecorp.com",
+      "source_ip": "192.168.1.105",
+      "user_agent": "Mozilla/5.0",
+      "details": "Second failed login attempt. Account may be under brute-force attack."
+    },
+    {
+      "timestamp": "2024-03-01T14:23:10Z",
+      "event_type": "account_locked",
+      "user_email": "john.smith@acmecorp.com",
+      "customer_id": "CUST-7823",
+      "phone_on_file": "+1-555-867-5309",
+      "details": "Account locked after 3 consecutive failures. Notify customer."
+    },
+    {
+      "timestamp": "2024-03-01T14:25:00Z",
+      "event_type": "admin_review",
+      "reviewed_by": "sarah.ops@acmecorp.com",
+      "note": "Suspicious IP 192.168.1.105 also seen in incident INC-2024-0289. Escalating."
+    }
+  ],
+  "metadata": {
+    "assigned_to": "security-team@acmecorp.com",
+    "created_by": "automated-siem",
+    "status": "open"
+  }
+}

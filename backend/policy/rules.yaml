@@ -1,0 +1,205 @@
+# policy/rules.yaml
+# ------------------
+# Declarative privacy policy.
+# Rules are evaluated TOP-TO-BOTTOM. The FIRST matching rule wins.
+#
+# Fields per rule:
+#   operation   : "analysis" | "export" | "storage" | "logging" | "*" (wildcard)
+#   entity_type : "EMAIL" | "IP_ADDRESS" | "PHONE" | "PERSON" | "ORGANIZATION" |
+#                 "LOCATION" | "CREDIT_CARD" | "SSN" | "URL" | "USERNAME" |
+#                 "CUSTOMER_ID" | "*" (wildcard)
+#   action      : "allow" | "pseudonymize" | "redact" | "block"
+#   reason      : human-readable explanation (shown in audit log)
+
+rules:
+
+  # ── CREDIT CARD & SSN: always block regardless of operation ─────────────────
+  - operation: "*"
+    entity_type: "CREDIT_CARD"
+    action: block
+    reason: "Credit card numbers must never be processed by any AI system."
+
+  - operation: "*"
+    entity_type: "SSN"
+    action: block
+    reason: "Social Security Numbers are strictly regulated and must be blocked."
+
+  # ── ANALYSIS operation (internal AI reasoning) ──────────────────────────────
+  - operation: analysis
+    entity_type: "EMAIL"
+    action: pseudonymize
+    reason: "During analysis, emails are pseudonymized to preserve identity continuity."
+
+  - operation: analysis
+    entity_type: "PERSON"
+    action: pseudonymize
+    reason: "Person names pseudonymized to allow pattern analysis without re-identification."
+
+  - operation: analysis
+    entity_type: "USERNAME"
+    action: pseudonymize
+    reason: "Usernames pseudonymized to preserve event correlation."
+
+  - operation: analysis
+    entity_type: "CUSTOMER_ID"
+    action: pseudonymize
+    reason: "Customer IDs pseudonymized for analysis."
+
+  - operation: analysis
+    entity_type: "IP_ADDRESS"
+    action: redact
+    reason: "IP addresses redacted during analysis – not needed for reasoning."
+
+  - operation: analysis
+    entity_type: "PHONE"
+    action: redact
+    reason: "Phone numbers redacted; not analytically useful."
+
+  - operation: analysis
+    entity_type: "ORGANIZATION"
+    action: allow
+    reason: "Organisation names are generally not PII in security log context."
+
+  - operation: analysis
+    entity_type: "LOCATION"
+    action: allow
+    reason: "General location data allowed for security analysis."
+
+  - operation: analysis
+    entity_type: "URL"
+    action: allow
+    reason: "URLs are typically non-personal and needed for analysis."
+
+  # ── EXPORT operation (sending data outside the system) ───────────────────────
+  - operation: export
+    entity_type: "EMAIL"
+    action: redact
+    reason: "All emails must be fully redacted before export."
+
+  - operation: export
+    entity_type: "IP_ADDRESS"
+    action: redact
+    reason: "IP addresses redacted on export per GDPR/data minimisation."
+
+  - operation: export
+    entity_type: "PERSON"
+    action: redact
+    reason: "Person names fully redacted on export."
+
+  - operation: export
+    entity_type: "PHONE"
+    action: redact
+    reason: "Phone numbers redacted on export."
+
+  - operation: export
+    entity_type: "USERNAME"
+    action: redact
+    reason: "Usernames redacted on export."
+
+  - operation: export
+    entity_type: "CUSTOMER_ID"
+    action: redact
+    reason: "Customer IDs redacted on export."
+
+  - operation: export
+    entity_type: "ORGANIZATION"
+    action: allow
+    reason: "Organisation names allowed in exports."
+
+  - operation: export
+    entity_type: "URL"
+    action: allow
+    reason: "URLs allowed in exports."
+
+  - operation: export
+    entity_type: "LOCATION"
+    action: allow
+    reason: "General locations allowed in exports."
+
+  # ── STORAGE operation (persisting to DB / logs) ──────────────────────────────
+  - operation: storage
+    entity_type: "EMAIL"
+    action: pseudonymize
+    reason: "Emails pseudonymized before storage to reduce breach risk."
+
+  - operation: storage
+    entity_type: "PERSON"
+    action: pseudonymize
+    reason: "Names pseudonymized in stored records."
+
+  - operation: storage
+    entity_type: "IP_ADDRESS"
+    action: pseudonymize
+    reason: "IPs pseudonymized before long-term storage."
+
+  - operation: storage
+    entity_type: "PHONE"
+    action: redact
+    reason: "Phone numbers redacted before storage."
+
+  - operation: storage
+    entity_type: "USERNAME"
+    action: pseudonymize
+    reason: "Usernames pseudonymized in storage."
+
+  - operation: storage
+    entity_type: "CUSTOMER_ID"
+    action: pseudonymize
+    reason: "Customer IDs pseudonymized before storage."
+
+  - operation: storage
+    entity_type: "URL"
+    action: allow
+    reason: "URLs stored as-is."
+
+  - operation: storage
+    entity_type: "ORGANIZATION"
+    action: allow
+    reason: "Organisation names stored as-is."
+
+  - operation: storage
+    entity_type: "LOCATION"
+    action: allow
+    reason: "Locations stored as-is."
+
+  # ── LOGGING operation (writing to application logs) ──────────────────────────
+  - operation: logging
+    entity_type: "EMAIL"
+    action: redact
+    reason: "Emails must not appear in plaintext logs."
+
+  - operation: logging
+    entity_type: "IP_ADDRESS"
+    action: pseudonymize
+    reason: "IPs pseudonymized in logs for debugging while protecting privacy."
+
+  - operation: logging
+    entity_type: "PERSON"
+    action: redact
+    reason: "Names redacted from logs."
+
+  - operation: logging
+    entity_type: "PHONE"
+    action: redact
+    reason: "Phone numbers must never appear in logs."
+
+  - operation: logging
+    entity_type: "USERNAME"
+    action: pseudonymize
+    reason: "Usernames pseudonymized in logs."
+
+  - operation: logging
+    entity_type: "CUSTOMER_ID"
+    action: pseudonymize
+    reason: "Customer IDs pseudonymized in logs."
+
+  - operation: logging
+    entity_type: "*"
+    action: allow
+    reason: "All other entity types allowed in logs by default."
+
+  # ── Catch-all fallback ────────────────────────────────────────────────────────
+  - operation: "*"
+    entity_type: "*"
+    action: redact
+    reason: "Default fallback: redact any unrecognised PII."
