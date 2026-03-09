@@ -1,5 +1,31 @@
-# PII-Safe
+# PII-Safe PoC — GSoC 2026 C2SI
 
+Privacy middleware that detects, redacts, and pseudonymizes PII 
+before it reaches an LLM. Built as a proof-of-concept for the 
+C2SI GSoC 2026 PII-Safe project.
+
+## Live Demo
+
+https://github.com/user-attachments/assets/eae47ab1-bd33-488c-b1b8-eff9f4486c00
+
+## What It Does
+Input → PII-Safe → Clean output to LLM.
+
+## Key Features
+- Policy-as-code (rules.yaml drives all decisions)
+- Consistent pseudonymization across a session
+- MCP server — plug into any MCP-compatible agent
+- Risk scoring (0.0–1.0)
+- FastAPI REST + React dashboard
+
+## What's Not in the PoC (Full Project Scope)
+- HuggingFace transformers for better NER
+- Redis session persistence
+- CLI batch tool
+- Docker deployment
+- LangChain/LangGraph integration examples
+  
+## Quick Start
 ## Run Backend API
 
 ```bash
